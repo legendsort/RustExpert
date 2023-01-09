@@ -9,11 +9,35 @@ use std::ops::Add;
 use std::collections::HashMap;
 use std::f32::consts::PI;
 
-mod restaurant;
-use crate::restaurant::order_food;
-
 fn main() {
-    let lil_arr = [1, 2, 3];
-    println!("{}", lil_arr[10]);
+    let path = "line.txt";
+    let output = File::create(path);
+    let mut output = match output {
+        Ok(file) => file,
+        Err(error) => {
+            panic!("problem, {:?}", error);
+        }
+    };
+    write!(output, "just\n").expect("Failed");
+
+    let input = File::open(path).unwrap();
+    let buffered = BufReader::new(input);
+    for line in buffered.lines() {
+        println!("{}", line.unwrap());
+    }
+
+    let output2 = File::create("rand.txt");
+    let output2 = match output2 {
+        Ok(file) => file,
+        Err(error) => match error.kind() {
+            ErrorKind::NotFound => match File::create("rand.txt") {
+                Ok(fc) => fc,
+                Err(e) => panic!("Can't create file for some unknown reason")
+            }
+            _other_error => panic!("Problem opening file")
+        }
+    };
+
+
 
 }
