@@ -10,34 +10,37 @@ use std::collections::HashMap;
 use std::f32::consts::PI;
 
 fn main() {
-    let path = "line.txt";
-    let output = File::create(path);
-    let mut output = match output {
-        Ok(file) => file,
-        Err(error) => {
-            panic!("problem, {:?}", error);
-        }
-    };
-    write!(output, "just\n").expect("Failed");
-
-    let input = File::open(path).unwrap();
-    let buffered = BufReader::new(input);
-    for line in buffered.lines() {
-        println!("{}", line.unwrap());
+    let mut arr = [1, 2, 3, 4];
+    for val in arr.iter() {
+        println!("{}", val);
     }
+    let mut iter1 = arr.iter();
+    println!("{:?}", iter1.next());
 
-    let output2 = File::create("rand.txt");
-    let output2 = match output2 {
-        Ok(file) => file,
-        Err(error) => match error.kind() {
-            ErrorKind::NotFound => match File::create("rand.txt") {
-                Ok(fc) => fc,
-                Err(e) => panic!("Can't create file for some unknown reason")
-            }
-            _other_error => panic!("Problem opening file")
-        }
+
+    let can = |age: i32| {
+        age >= 18
     };
 
+    println!("Can vote: {}", can(8));
+
+    let mut samp1 = 5;
+    let var = || println!("{}", samp1);
+    var();
+    samp1 = 5;
+    let mut change = || samp1 += 1;
+    change();
+    println!("{}", samp1);
 
 
+
+    fn use_func<T>(a: i32, b: i32, func: T) -> i32 
+    where T: Fn(i32, i32) -> i32 {
+        func(a, b)
+    }
+    let sum = |a, b| a +b;
+    let pro = |a, b| a*b;
+    println!("{}", use_func(5, 4, sum));
+    println!("{}", use_func(5, 4, pro));
 }
+
