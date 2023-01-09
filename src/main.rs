@@ -13,6 +13,7 @@ mod restaurant;
 use crate::restaurant::order_food;
 
 fn main() {
-    order_food();
+    let lil_arr = [1, 2, 3];
+    println!("{}", lil_arr[10]);
 
 }
