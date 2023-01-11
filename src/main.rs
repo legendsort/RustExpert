@@ -10,37 +10,36 @@ use std::collections::HashMap;
 use std::f32::consts::PI;
 
 fn main() {
-    let mut arr = [1, 2, 3, 4];
-    for val in arr.iter() {
-        println!("{}", val);
+    let b = Box::new(10);
+    println!("{}", b);
+    struct TreeNode<T> {
+        pub left: Option<Box<TreeNode<T>>>,
+        pub right: Option<Box<TreeNode<T>>>,
+        pub key: T,
     }
-    let mut iter1 = arr.iter();
-    println!("{:?}", iter1.next());
 
-
-    let can = |age: i32| {
-        age >= 18
-    };
-
-    println!("Can vote: {}", can(8));
-
-    let mut samp1 = 5;
-    let var = || println!("{}", samp1);
-    var();
-    samp1 = 5;
-    let mut change = || samp1 += 1;
-    change();
-    println!("{}", samp1);
-
-
-
-    fn use_func<T>(a: i32, b: i32, func: T) -> i32 
-    where T: Fn(i32, i32) -> i32 {
-        func(a, b)
+    impl<T> TreeNode<T> {
+        pub fn new(key: T) -> Self {
+            TreeNode {
+                left: None,
+                right: None,
+                key,
+            }
+        }
+        pub fn left(mut self, node: TreeNode<T>) -> Self {
+            self.left = Some(Box::new(node));
+            self
+        }
+        pub fn right(mut self, node: TreeNode<T>) -> Self {
+            self.right = Some(Box::new(node));
+            self
+        }
     }
-    let sum = |a, b| a +b;
-    let pro = |a, b| a*b;
-    println!("{}", use_func(5, 4, sum));
-    println!("{}", use_func(5, 4, pro));
+    let node1 = TreeNode::new(1)
+        .left(TreeNode::new(2)).right(TreeNode::new(3));
+
+
+
+
 }
 
