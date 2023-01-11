@@ -1,5 +1,6 @@
 #![allow(unused)]
 
+use core::f32;
 use std::io;
 use rand::Rng;
 use std::io::{Write, BufReader, BufRead, ErrorKind};
@@ -11,20 +12,40 @@ use std::f32::consts::PI;
 
 use std::thread;
 use std::time::Duration;
+use std::rc::Rc;
+use std::cell::RefCell;
+use std::sync::{Arc, Mutex};
 
 fn main() {
-    let thread1 = thread::spawn(|| {
-        for i in 1..25 {
-            println!("Thread : {}", i);
-            thread::sleep(Duration::from_millis(1));
-        }
-    });
-
-    for i in 1..20 {
-        println!("Main: {}", i);
-        thread::sleep(Duration::from_millis(1));
+    pub struct Bank {
+        balance: f32
     }
-    thread1.join().unwrap();
+    fn withdraw(bank: &Arc<Mutex<Bank>>, amt: f32) {
+        let mut bankref = bank.lock().unwrap();
+        if bankref.balance < 5.00 {
+            println!("CAn't {}", bankref.balance);
+        } else {
+            bankref.balance -= amt;
+            println!("Withdrawed {} {}", amt, bankref.balance);
+        }
+    }
+
+    fn customer(bank: &Arc<Mutex<Bank>>) {
+        withdraw(&bank, 5.00);
+    }
+
+    let bank: Arc<Mutex<Bank>> = Arc::new(Mutex::new(Bank {balance: 20.00}));
+    let handles = (0..10).map(|_| {
+        let bankref = bank.clone();
+        thread::spawn(move || {
+            customer(&bankref)
+        })
+    });
+    for handle in handles {
+        handle.join().unwrap();
+    }
+    println!("Total {}", bank.lock().unwrap().balance);
+
 
 }
 
